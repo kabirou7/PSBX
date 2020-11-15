@@ -1,7 +1,6 @@
 ---
 title: "MNIST et Fashion MNIST (Illustration dans R)"
-author: "Groupe 12: Kanlanfeyi Kabirou, Hounssinou Jordy"
-date: "11/16/2020"
+author: "Kanlanfeyi Kabirou, Hounssinou Jordy"
 output: pdf_document
 ---
 
@@ -34,12 +33,24 @@ Le processus de reconnaissance des chiffres et des articles de mode  est consti
 
 ## 3.Algorithmes choisis
 
+Ici, nous exposons sur les algorithmes principaux utilisés dans notre application, notamment Naive Bayes, Random Forest. 
+
+Random Forest ( les forêts d’arbres décisionnels) est un algorithme d’apprentissage automatique qui combine les concepts de sous-espaces aléatoires et de bagging.  Le concept de cet algorithme est basé sur l’apprentissage de multiples arbres de décision entraînés sur des sous-ensembles de données légèrement différents.
+
+
+Naive Bayes quant à lui est un algorithme de classification basé sur le théorème de Bayes, lui même basé sur les probabilités conditionnelles. 
+
+*Comment mesurer la performance de nos algorithmes?*  
+Nous utiliserons dans notre cas la matrice de confusion qui est très utilisée en apprentissage supervisé pour évaluer la performances d'un modèle de classification. Dans cette matrice, les lignes correspondent aux nombres d'instances réelles et les colones le nombre d'instances prédites.
 
 
 \newpage
 ## 4.Exemple de code R
 
-Dans cette partie nous allons utiliser des algorithmes de Machine Learning pour entrainer nos images afin de pouvoir en faire une prédiction des images que nous avons. Cette partie sera donc subdivisée en plusieurs section
+Dans cette partie nous allons utiliser des algorithmes de Machine Learning pour entrainer nos données afin de construire des modèles prédictifs qui seront à leurs tours utilisés pour des tests de nouvelles données. Une comparaison de nos modèles sera alors dans notre cas sur la base de leur précision en ce qui concerne la prédicition sur de nouvelles images.
+Cette partie du documet est subdivisée comme suit:
+
+**Importation des librairies et lecture des données**
 
 ```{r}
 library(readr)
@@ -62,7 +73,7 @@ mnist <- read_csv("train.csv")
 fashion <- read_csv("fashion.csv")
 ```
 
-*Encodage de la colonne label sous forme de catégorie avec la fonction ***factor**
+**Encodage de la colonne label sous forme de catégorie avec la fonction *factor* **
 ```{r}
 mnist$label = factor(mnist$label)
 fashion$label = factor(fashion$label)
@@ -92,12 +103,14 @@ test_fashion <- anti_join(fashion, train_fashion)
 ```
 
 
-*Construction de nos modèles:*  
-Notons que nous construirons deux fois le même algorithme pour les deux jeux de données différents
+**Construction de nos modèles:**  
+
+Notons que nous utiliserons deux fois le même algorithme pour les deux jeux de données différents
 
 *Nous aimerons ajouter que pour la construction de nos modèles, nous avons minimisé l'ajout de paramètres au strict nécéssaire pour faciliter la durée de traitement.*
 
-*###Random Forest*  
+*Random Forest*  
+
 ```{r}
 rf_MNIST <- randomForest(label ~ ., data = train_mnist, ntree = 10)
 pred_MNIST1 <- predict(rf_MNIST, test_mnist)
@@ -106,7 +119,8 @@ rf_FASH <- randomForest(label ~ ., data = train_fashion, ntree = 10)
 pred_FASH1 <- predict(rf_FASH, test_fashion)
 ```
 
-*####Naive Bayes*  
+*Naive Bayes*  
+
 ```{r}
 bayes_MNIST <- randomForest(label ~ ., data = train_mnist)
 pred_MNIST2 <- predict(bayes_MNIST, test_mnist)
@@ -116,7 +130,10 @@ pred_FASH2 <- predict(bayes_FASH, test_fashion)
 ```
 
 
-###Utilisation de la Matrice de confusion pour évaluer notre model construit
+
+*Utilisation de la Matrice de confusion pour évaluer nos modelès construit*
+
+
 ```{r}
 cm_rf1 <- confusionMatrix(pred_MNIST1, test_mnist$label)
 cm_rf2 <- confusionMatrix(pred_FASH1, test_fashion$label)
@@ -124,7 +141,7 @@ cm_nb1 <- confusionMatrix(pred_MNIST2, test_mnist$label)
 cm_nb2 <- confusionMatrix(pred_FASH2, test_fashion$label)
 ```
 
-###Affichage des résultats  
+**Affichage des résultats**  
 Après les test de nos modèles sur les deux bases de données, nous nous retrouvons avec les résultats suivants
 ```{r}
 #Nous créons une matrice 2x2
@@ -134,19 +151,26 @@ rownames(valeurs)<- c("MNIST", "Fashion MNIST")
 tableau <- as.table(valeurs)
 print(tableau)
 ```   
-
-###Tableau récapitulatif
-```{r}
-
-```
-
+ 
+ **Interprétation des résultats**  
+ 
+ Les résultats obtenus nous montrent que les deux algorithmes sont relativement adéquats en ce qui concerne la prédiction de nouvelles images avec des précisions de plus de 80% pour les deux algorithmes dans notre cas d'étude. Cette précision pourrait toutefois être optimisée en utilisant par exemple plus d'arbres de décisions dans le cas de l'algorithme Random Forest. 
+ 
+ Afin de pallier au problème du bon choix des paramètres et d'éviter un travail manuel, certaines méthodes sont très utilisées telles que  l'Hyperparameters Tuning.
+ 
+ 
+ 
 \newpage
-#Références
+
+*Références*
 
 <https://www.kaggle.com/c/digit-recognizer>  
+<https://mrmint.fr/naive-bayes-classifier>  
 <https://www.kaggle.com/zalando-research/fashionmnist>  
+<https://fr.wikipedia.org/wiki/For%C3%AAt_d%27arbres_d%C3%A9cisionnels#Algorithme>  
 <https://www.kaggle.com/arathee2/random-forest-vs-xgboost-vs-deep-neural-network>  
 <https://thinkr.fr/premiers-pas-en-machine-learning-avec-r-volume-4-random-forest>  
 <https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/factor>  
-<https://www.rdocumentation.org/packages/e1071/versions/1.7-3/topics/naiveBayes>
-<https://stackoverflow.com/questions/24677642/centering-image-and-text-in-r-markdown-for-a-pdf-report>
+<https://www.rdocumentation.org/packages/e1071/versions/1.7-3/topics/naiveBayes>  
+<https://fr.wikipedia.org/wiki/Matrice_de_confusion>  
+<https://stackoverflow.com/questions/24677642/centering-image-and-text-in-r-markdown-for-a-pdf-report>  
