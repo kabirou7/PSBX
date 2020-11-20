@@ -1,17 +1,18 @@
 ---
 title: "MNIST et Fashion MNIST (Illustration dans R)"
-author: "Kanlanfeyi Kabirou, Hounssinou Jordy"
+author: "Kanlanfeyi Kabirou, Hounsinou Jordy"
 output: pdf_document
 ---
 
+
+\newpage
 # Sommaire
 - 1. Introduction
 - 2. Présentation des bases de données
 - 3. Algorithmes choisis
 - 4. Exemple de code R
 
-\newpage
-## 1. Introduction
+## 1. Introduction  
 
 De nos jours, les technologies de Machine Learning et de Deep Learning  s'imposent dans tous les secteurs d'activités du fait de la numérisation des données. Ainsi, elles permettent à ces secteurs de réaliser des progrès spectaculaires grâce à l’exploitation de grands volumes de données. 
 
@@ -40,23 +41,19 @@ Random Forest ( les forêts d’arbres décisionnels) est un algorithme d’appr
 
 Naive Bayes quant à lui est un algorithme de classification basé sur le théorème de Bayes, lui même basé sur les probabilités conditionnelles. 
 
-*Comment mesurer la performance de nos algorithmes?*  
-Nous utiliserons dans notre cas la matrice de confusion qui est très utilisée en apprentissage supervisé pour évaluer la performances d'un modèle de classification. Dans cette matrice, les lignes correspondent aux nombres d'instances réelles et les colones le nombre d'instances prédites.
-
 
 \newpage
-## 4.Exemple de code R
+## 4.Exemple de code R  
 
 Dans cette partie nous allons utiliser des algorithmes de Machine Learning pour entrainer nos données afin de construire des modèles prédictifs qui seront à leurs tours utilisés pour des tests de nouvelles données. Une comparaison de nos modèles sera alors dans notre cas sur la base de leur précision en ce qui concerne la prédicition sur de nouvelles images.
 Cette partie du documet est subdivisée comme suit:
 
-**Importation des librairies et lecture des données**
+**Importation des librairies et lecture des données**  
 
 ```{r}
 library(readr)
 library(randomForest)
 library(caret)
-library(xgboost)
 library(naivebayes)
 library(class)
 
@@ -66,7 +63,6 @@ library(dplyr)
 
 #Librairies Installée
 #caret pour la matrice de confusion
-#naiveBayes et randomForest : Algo``
 
 #Lire les deux données: MNIST et fashion MNIST
 mnist <- read_csv("train.csv")
@@ -79,7 +75,21 @@ mnist$label = factor(mnist$label)
 fashion$label = factor(fashion$label)
 ```
 
-*Dans cette partie nous allons afficher les contenues des deux données avec la fonction head*  
+
+__Normalisation des données__  
+
+Afin de normaliser les données, nous divisons nos valeurs par 255 afin d'éviter par exemple les valeurs abérantes.
+La valeur maximale étant 255 pour chacune des colonnes, nous faisons alors une division par 255 afin d'avoir des valeurs comprises entre 0 et 1
+
+```{r}
+mnist[,2:785] = mnist[,2:785]/255
+fashion[,2:785] = fashion[,2:785]/255
+```
+
+
+*Dans cette partie nous allons afficher les contenues des deux données avec la fonction head*
+
+Nous pouvons également remarquer que certaines valeurs sont comprise entre 0 et 1 dû à la normalisation des données
 ```{r}
 #Visualisation de la structure des données en affichant les premières lignes
 head(mnist[1:10,1:10])
@@ -150,7 +160,14 @@ colnames(valeurs)<- c("Naive Bayes", "Random Forest")
 rownames(valeurs)<- c("MNIST", "Fashion MNIST")
 tableau <- as.table(valeurs)
 print(tableau)
-```   
+```  
+
+
+**Visualisation d'une matrice de confusion**  
+```{r}
+cm_rf1
+```
+
  
  **Interprétation des résultats**  
  
@@ -162,7 +179,7 @@ print(tableau)
  
 \newpage
 
-*Références*
+**Références**  
 
 <https://www.kaggle.com/c/digit-recognizer>  
 <https://mrmint.fr/naive-bayes-classifier>  
